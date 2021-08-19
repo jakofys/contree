@@ -38,12 +38,6 @@ Just set value using path data:
 conf.Set("path.to.my.value", "value") // string value
 ```
 
-Locked value allow you to lock configuration value whole runtime.
-
-```go
-conf.SetDefault("path.to.my.value", "value", true) // string value
-```
-
 ### Configuration file format
 
 Configuration file supports:
@@ -79,6 +73,15 @@ err := conf.Append("path.to.my.list", "valueToAppend")
 ```
 
 > ⚠ Append can return error if the pass is not a list
+
+### Interpolation
+
+You can have same behavior as `fmt.Sprintf` except syntax to interpolate making:
+
+```go
+conf.Set("path.to.value", "Casanova")
+conf.Sprintf("Simply replace data from %path.to.value%") // Output: Simply replace data Casanova
+```
 
 ### Exportation
 

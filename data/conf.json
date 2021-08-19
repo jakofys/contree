@@ -1,0 +1,12 @@
+{
+    "test":{
+        "longpath":{
+             "user": "user",
+             "pwd": "pwd"
+        },
+        "shortpath":{
+             "host": "hostname",
+             "port": "8596"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+[test.longpath]
+user = "user"
+pwd = "pwd"
+
+[test.shortpath]
+host = "hostname"
+port = "8596"
