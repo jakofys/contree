@@ -10,7 +10,7 @@ go get -u github.com/jakofys/contree
 
 ## Use
 
-### Import from file
+<!-- ### Import from file
 
 To import configuration value:
 
@@ -22,7 +22,7 @@ Or from reader as:
 
 ```go
 conf := contree.From(io.Reader, contree.YAML)
-```
+``` -->
 
 ### Get value
 
@@ -38,7 +38,7 @@ Just set value using path data:
 conf.Set("path.to.my.value", "value") // string value
 ```
 
-### Configuration file format
+<!-- ### Configuration file format
 
 Configuration file supports:
 
@@ -55,9 +55,9 @@ path:
     to:
         my:
             value: "myvalue"
-```
+``` -->
 
-### List value
+<!-- ### List value
 
 You can set a list value or get it juts make:
 
@@ -72,7 +72,7 @@ Or you can append value in conf directly using:
 err := conf.Append("path.to.my.list", "valueToAppend")
 ```
 
-> ⚠ Append can return error if the pass is not a list
+> ⚠ Append can return error if the pass is not a list -->
 
 ### Interpolation
 
@@ -83,13 +83,13 @@ conf.Set("path.to.value", "Casanova")
 conf.Sprintf("Simply replace data from %path.to.value%") // Output: Simply replace data Casanova
 ```
 
-### Exportation
+<!-- ### Exportation
 
 You can export structure to any format extension file using:
 
 ```go
 err := conf.Export(io.Writer, contree.YAML) 
-```
+``` -->
 
 ## Reference
 

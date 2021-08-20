@@ -1,7 +1,6 @@
 package contree
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -10,7 +9,7 @@ type NodeConf struct {
 	Value  string
 	Level  int
 	childs map[string]*NodeConf
-	path   string
+	isLeaf bool
 }
 
 func (n *NodeConf) IsNamed(str string) bool {
@@ -26,12 +25,7 @@ func (n *NodeConf) Insert(node *NodeConf) {
 		n.childs = make(map[string]*NodeConf)
 	}
 	node.Level = n.Level + 1
-	if n.Level == 0 {
-		node.path = node.Name
-	} else {
-		node.path = n.path + "." + node.Name
-	}
-
+	node.isLeaf = true
 	n.childs[node.Name] = node
 }
 
@@ -51,11 +45,11 @@ func (n *NodeConf) Browse(path string) string {
 func (n *NodeConf) SetRecursivly(path string, value string) {
 	if len(path) <= 0 {
 		n.Value = value
-		fmt.Println(*n)
 		return
 	}
 	part := strings.Split(path, ".")
 	if len(part) >= 1 {
+		n.isLeaf = false
 		if node, ok := n.childs[part[0]]; ok {
 			node.SetRecursivly(strings.Join(part[1:], "."), value)
 		} else {

@@ -1,58 +1,66 @@
 package contree
 
 import (
+	"errors"
 	"regexp"
 	"strings"
 )
 
-type ConfigurationValueNotFoundError struct{}
-
-func (c *ConfigurationValueNotFoundError) Error() string {
-	return "Configuration path not found"
-}
-
 type Contree struct {
-	name   string
-	childs map[string]*NodeConf
+	root *NodeConf
 }
 
-func NewConf(name string) *Contree {
+func NewContree(name string) *Contree {
 	return &Contree{
-		name:   name,
-		childs: make(map[string]*NodeConf),
+		root: &NodeConf{
+			Name: name,
+		},
 	}
 }
 
-func (c *Contree) Load(contree *Contree) error {
-	return nil
+func (c *Contree) Set(path string, value string) {
+	c.root.SetRecursivly(path, value)
+}
+
+func (c *Contree) Get(path string) (string, error) {
+	value := c.root.Browse(path)
+	if value == "" {
+		return "", errors.New("Path value not found")
+	}
+	return value, nil
 }
 
 func (c *Contree) Sprintf(str string) string {
 	regex := regexp.MustCompile(`%[\w.]+%`)
 	for _, found := range regex.FindAllString(str, -1) {
-		str = strings.ReplaceAll(str, found, c.Get(found[1:len(found)-1]))
+		if value := c.root.Browse(found[1 : len(found)-1]); value != "" {
+			str = strings.ReplaceAll(str, found, value)
+		}
 	}
 	return str
 }
 
-func (c *Contree) Set(path string, value string) {
-	pathSlice := strings.Split(path, ".")
-	if node, ok := c.childs[pathSlice[0]]; ok {
-		node.Set(strings.Join(pathSlice[1:], "."), value)
-	}
-}
+// func (c *Contree) From(reader io.Reader, codec Codec) error {
+// 	var buff []byte
+// 	_, err := reader.Read(buff)
+// 	if err != nil {
+// 		return err
+// 	}
 
-func (c *Contree) Get(path string) string {
-	pathSlice := strings.Split(path, ".")
-	if node, ok := c.childs[pathSlice[0]]; ok {
-		if str, err := node.Get(strings.Join(pathSlice[1:], ".")); err == nil {
-			return str
-		}
-	}
-	return ""
-}
+// 	node, err := codec.Decode(buff)
+// 	if err != nil {
+// 		return err
+// 	}
 
-func (c *Contree) Add(node *NodeConf) {
-	node.Level = 0
-	c.childs[node.Name] = node
-}
+// 	c.Load(node)
+// 	return nil
+// }
+
+// func (c *Contree) FromFile(filename string, codec Codec) error {
+// 	file, err := os.Open(filename)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer file.Close()
+// 	return c.From(file, codec)
+// }
