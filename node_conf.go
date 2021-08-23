@@ -7,7 +7,6 @@ import (
 type NodeConf struct {
 	Name   string
 	Value  string
-	Level  int
 	childs map[string]*NodeConf
 	isLeaf bool
 }
@@ -24,7 +23,6 @@ func (n *NodeConf) Insert(node *NodeConf) {
 	if n.childs == nil {
 		n.childs = make(map[string]*NodeConf)
 	}
-	node.Level = n.Level + 1
 	node.isLeaf = true
 	n.childs[node.Name] = node
 }
@@ -57,10 +55,21 @@ func (n *NodeConf) SetRecursivly(path string, value string) {
 				Name: part[0],
 			}
 			n.Insert(node)
-			if n.Level > 10 {
-				return
-			}
 			node.SetRecursivly(strings.Join(part[1:], "."), value)
+		}
+	}
+}
+
+func (n *NodeConf) Merge(node *NodeConf, overwrite bool) {
+	if overwrite && n.Value != "" {
+		n.Value = node.Value
+	}
+
+	for index, child := range node.childs {
+		if childnode, ok := n.childs[index]; ok {
+			childnode.Merge(child, overwrite)
+		} else {
+			n.Insert(child)
 		}
 	}
 }

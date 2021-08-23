@@ -11,7 +11,6 @@ func TestNodeConfGetValue(t *testing.T) {
 	node := &contree.NodeConf{
 		Name:  "name1",
 		Value: "value1",
-		Level: 1,
 	}
 
 	if node.IsNamed("name") {
@@ -26,13 +25,11 @@ func TestNodeConfInsertNode(t *testing.T) {
 	node1 := &contree.NodeConf{
 		Name:  "name1",
 		Value: "value1",
-		Level: 1,
 	}
 
 	node2 := contree.NodeConf{
 		Name:  "name2",
 		Value: "value2",
-		Level: 1,
 	}
 
 	node1.Insert(&node2)
@@ -46,19 +43,16 @@ func TestNodeConfDepthBrowse(t *testing.T) {
 	node1 := &contree.NodeConf{
 		Name:  "name1",
 		Value: "value1",
-		Level: 1,
 	}
 
 	node2 := contree.NodeConf{
 		Name:  "name2",
 		Value: "value2",
-		Level: 1,
 	}
 
 	node3 := contree.NodeConf{
 		Name:  "name3",
 		Value: "value3",
-		Level: 1,
 	}
 
 	node2.Insert(&node3)
@@ -73,12 +67,11 @@ func TestNodeConfDepthBrowse(t *testing.T) {
 	}
 }
 
-func TestNodeConfSetDepth(t *testing.T) {
+func TestNodeConfSetRecursivly(t *testing.T) {
 
 	node := &contree.NodeConf{
 		Name:  "name1",
 		Value: "value1",
-		Level: 1,
 	}
 
 	node.SetRecursivly("name1.name2.name3", "helloworld")
@@ -91,5 +84,33 @@ func TestNodeConfSetDepth(t *testing.T) {
 
 	if node.Browse("path.to.yo") == "helloworld" {
 		t.Error("Recursivly setting value failed, found helloworld instead or: ", node.Browse("path.to.yo"))
+	}
+}
+
+func TestMergeContree(t *testing.T) {
+
+	node1 := &contree.NodeConf{
+		Name:  "node1",
+		Value: "value1",
+	}
+
+	node1.SetRecursivly("for.example.1", "helloworld")
+	node1.SetRecursivly("for.example.1.1", "helloworld twice")
+	node1.SetRecursivly("for.example.3", "basic info")
+
+	node2 := &contree.NodeConf{
+		Name:  "name1",
+		Value: "value1",
+	}
+	node2.SetRecursivly("for.example.2", "bye bye")
+	node2.SetRecursivly("for.example.2.1", "bye bye twice")
+	node2.SetRecursivly("for.example.3", "rewrite info")
+
+	node1.Merge(node2, true)
+
+	if node1.Browse("for.example.2.1") != "bye bye twice" ||
+		node1.Browse("for.example.1.1") != "helloworld twice" ||
+		node1.Browse("for.example.3") != "rewrite info" {
+		t.Error()
 	}
 }
